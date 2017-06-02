@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mesh", "mesh\mesh.vcxproj", "{5705CA9F-95A0-477C-9169-4CBB0484A44A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{09B9A54B-FC57-4A98-9671-5706FC3846C9}"
+	ProjectSection(SolutionItems) = preProject
+		base\camera.hpp = base\camera.hpp
+		base\frustum.hpp = base\frustum.hpp
+		base\keycodes.hpp = base\keycodes.hpp
+		base\threadpool.hpp = base\threadpool.hpp
+		base\vulkanandroid.cpp = base\vulkanandroid.cpp
+		base\vulkanandroid.h = base\vulkanandroid.h
+		base\VulkanBuffer.hpp = base\VulkanBuffer.hpp
+		base\vulkandebug.cpp = base\vulkandebug.cpp
+		base\vulkandebug.h = base\vulkandebug.h
+		base\VulkanDevice.hpp = base\VulkanDevice.hpp
+		base\vulkanexamplebase.cpp = base\vulkanexamplebase.cpp
+		base\vulkanexamplebase.h = base\vulkanexamplebase.h
+		base\VulkanFrameBuffer.hpp = base\VulkanFrameBuffer.hpp
+		base\VulkanHeightmap.hpp = base\VulkanHeightmap.hpp
+		base\VulkanInitializers.hpp = base\VulkanInitializers.hpp
+		base\VulkanModel.hpp = base\VulkanModel.hpp
+		base\VulkanSwapChain.hpp = base\VulkanSwapChain.hpp
+		base\VulkanTextOverlay.hpp = base\VulkanTextOverlay.hpp
+		base\VulkanTexture.hpp = base\VulkanTexture.hpp
+		base\vulkantools.cpp = base\vulkantools.cpp
+		base\VulkanTools.h = base\VulkanTools.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E815C67-731B-4559-938E-23CD771F0860}"
+	ProjectSection(SolutionItems) = preProject
+		CMakeLists.txt = CMakeLists.txt
+		README.md = README.md
+		external\vulkan\vulkan.h = external\vulkan\vulkan.h
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5705CA9F-95A0-477C-9169-4CBB0484A44A}.Debug|x64.ActiveCfg = Debug|x64
+		{5705CA9F-95A0-477C-9169-4CBB0484A44A}.Debug|x64.Build.0 = Debug|x64
+		{5705CA9F-95A0-477C-9169-4CBB0484A44A}.Release|x64.ActiveCfg = Release|x64
+		{5705CA9F-95A0-477C-9169-4CBB0484A44A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
