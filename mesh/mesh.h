@@ -41,30 +41,12 @@ public:
 
 	struct
 	{
-		vks::Texture2D colorMap;
-	} textures;
-
-	struct
-	{
 		VkPipelineVertexInputStateCreateInfo inputState;
 		std::vector<VkVertexInputBindingDescription> bindingDescriptions;
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
 	} vertices;
 
-	struct
-	{
-		vks::Buffer scene;
-	} uniformBuffers;
-
-	struct
-	{
-		glm::mat4 projection;
-		glm::mat4 model;
-		glm::vec4 lightPos = glm::vec4(25.0f, 5.0f, 5.0f, 1.0f);
-	} uboVS;
-
 	std::vector<Model*> models;
-	Model model;
 	Pipelines pipelines;
 
 	VkPipelineLayout pipelineLayout;
@@ -82,7 +64,7 @@ public:
 	void buildCommandBuffers();
 
 	// Load a model from file using the ASSIMP model loader and generate all resources required to render the model
-	void loadModel(std::string filename);
+	void loadModel(std::string filename, Model& model);
 
 	void loadAssets();
 
@@ -95,22 +77,6 @@ public:
 	void setupDescriptorSet();
 
 	void preparePipelines();
-
-	// Prepare and initialize uniform buffer containing shader uniforms
-	void prepareUniformBuffers()
-	{
-		// Vertex shader uniform buffer block
-		VK_CHECK_RESULT(vulkanDevice->createBuffer(
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			&uniformBuffers.scene,
-			sizeof(uboVS)));
-
-		// Map persistent
-		VK_CHECK_RESULT(uniformBuffers.scene.map());
-
-		updateUniformBuffers();
-	}
 
 	void updateUniformBuffers();
 
