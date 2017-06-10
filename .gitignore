@@ -202,5 +202,3 @@ vulkanCapsViewer/vulkanreport.json
 !data/models/lowpoly/*.obj
 !data/models/voyager/*.obj
 
-# DLLs in bin
-!bin/*.dll
