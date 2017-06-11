@@ -30,6 +30,7 @@
 #include "VulkanTexture.hpp"
 
 #include "Utilities.h"
+#include "Model.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 #define ENABLE_VALIDATION false
