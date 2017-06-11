@@ -47,7 +47,9 @@ struct Model
 	vks::VulkanDevice *vulkanDevice;
 	VkDescriptorSet descriptorSet;
 
-	Model(vks::VulkanDevice *vulkanDevice) : vulkanDevice(vulkanDevice) {};
+	Model(vks::VulkanDevice *vulkanDevice) : vulkanDevice(vulkanDevice), descriptorSet(0)
+	{
+	};
 	~Model()
 	{
 		destroy(*vulkanDevice);
@@ -115,8 +117,6 @@ struct Model
 
 		vkUpdateDescriptorSets(vulkanDevice->logicalDevice, static_cast<uint32_t>(writeDescriptorSets.size()), writeDescriptorSets.data(), 0, NULL);
 	}
-
-
 
 	// Destroys all Vulkan resources created for this model
 	void destroy(VkDevice device)

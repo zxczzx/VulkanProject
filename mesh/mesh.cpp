@@ -10,7 +10,6 @@ VulkanExample::VulkanExample() : VulkanExampleBase(ENABLE_VALIDATION)
 	enableTextOverlay = true;
 	title = "Vulkan Example - Model rendering";
 
-	models.push_back(new Model(vulkanDevice));
 }
 
 VulkanExample::~VulkanExample()
@@ -26,7 +25,10 @@ VulkanExample::~VulkanExample()
 	vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 	vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 
-	//TODO: destroy models vector
+	for (auto& model : models)
+	{
+		model->destroy(device);
+	}
 }
 
 void VulkanExample::getEnabledFeatures()
@@ -85,17 +87,16 @@ void VulkanExample::buildCommandBuffers()
 		for (auto model : models)
 		{
 			VkDeviceSize offsets[1] = { 0 };
-			vkCmdBindDescriptorSets(drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+			vkCmdBindDescriptorSets(drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &model->descriptorSet, 0, NULL);
 			// Bind mesh vertex buffer
 			vkCmdBindVertexBuffers(drawCmdBuffers[i], VERTEX_BUFFER_BIND_ID, 1, &model->vertices.buffer, offsets);
 			// Bind mesh index buffer
 			vkCmdBindIndexBuffer(drawCmdBuffers[i], model->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 			// Render mesh vertex buffer using it's indices
 			vkCmdDrawIndexed(drawCmdBuffers[i], model->indices.count, 1, 0, 0, 0);
-
-			vkCmdEndRenderPass(drawCmdBuffers[i]);
 		}
 
+		vkCmdEndRenderPass(drawCmdBuffers[i]);
 		VK_CHECK_RESULT(vkEndCommandBuffer(drawCmdBuffers[i]));
 	}
 }
@@ -155,7 +156,6 @@ void VulkanExample::loadModel(std::string filename, Model& model)
 	}
 	size_t indexBufferSize = indexBuffer.size() * sizeof(uint32_t);
 
-	//TODO: update model
 	model.indices.count = static_cast<uint32_t>(indexBuffer.size());
 
 	// Static mesh should always be device local
@@ -203,7 +203,7 @@ void VulkanExample::loadModel(std::string filename, Model& model)
 			&model.indices.memory));
 
 		// Copy from staging buffers
-		VkCommandBuffer copyCmd = VulkanExampleBase::createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+		VkCommandBuffer copyCmd = vulkanDevice->createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 		VkBufferCopy copyRegion = {};
 
@@ -223,7 +223,7 @@ void VulkanExample::loadModel(std::string filename, Model& model)
 			1,
 			&copyRegion);
 
-		VulkanExampleBase::flushCommandBuffer(copyCmd, queue, true);
+		vulkanDevice->flushCommandBuffer(copyCmd, queue, true);
 
 		vkDestroyBuffer(device, vertexStaging.buffer, nullptr);
 		vkFreeMemory(device, vertexStaging.memory, nullptr);
@@ -249,23 +249,33 @@ void VulkanExample::loadModel(std::string filename, Model& model)
 			&model.indices.memory,
 			indexBuffer.data()));
 	}
+
+	model.prepareUniformBuffers();
 }
 
 void VulkanExample::loadAssets()
 {
-	for (auto model : models)
+	const int MODELS_COUNT = 1;
+	models.resize(MODELS_COUNT);
+
+	for (int i = 0; i < MODELS_COUNT; i++)
 	{
-		loadModel(getAssetPath() + "models/voyager/voyager.dae", *model);
-		if (deviceFeatures.textureCompressionBC) {
-			model->textures.colorMap.loadFromFile(getAssetPath() + "models/voyager/voyager_bc3_unorm.ktx", VK_FORMAT_BC3_UNORM_BLOCK, vulkanDevice, queue);
+		models[i] = new Model(vulkanDevice);
+		loadModel(getAssetPath() + "models/voyager/voyager.dae", *models[i]);
+		if (deviceFeatures.textureCompressionBC) 
+		{
+			models[i]->textures.colorMap.loadFromFile(getAssetPath() + "models/voyager/voyager_bc3_unorm.ktx", VK_FORMAT_BC3_UNORM_BLOCK, vulkanDevice, queue);
 		}
-		else if (deviceFeatures.textureCompressionASTC_LDR) {
-			model->textures.colorMap.loadFromFile(getAssetPath() + "models/voyager/voyager_astc_8x8_unorm.ktx", VK_FORMAT_ASTC_8x8_UNORM_BLOCK, vulkanDevice, queue);
+		else if (deviceFeatures.textureCompressionASTC_LDR) 
+		{
+			models[i]->textures.colorMap.loadFromFile(getAssetPath() + "models/voyager/voyager_astc_8x8_unorm.ktx", VK_FORMAT_ASTC_8x8_UNORM_BLOCK, vulkanDevice, queue);
 		}
-		else if (deviceFeatures.textureCompressionETC2) {
-			model->textures.colorMap.loadFromFile(getAssetPath() + "models/voyager/voyager_etc2_unorm.ktx", VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK, vulkanDevice, queue);
+		else if (deviceFeatures.textureCompressionETC2) 
+		{
+			models[i]->textures.colorMap.loadFromFile(getAssetPath() + "models/voyager/voyager_etc2_unorm.ktx", VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK, vulkanDevice, queue);
 		}
-		else {
+		else 
+		{
 			vks::tools::exitFatal("Device does not support any compressed texture format!", "Error");
 		}
 	}
@@ -465,18 +475,8 @@ void VulkanExample::updateUniformBuffers()
 	for (auto model : models)
 	{
 		glm::mat4 perspective = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.1f, 256.0f);
-
-
+		model->updateUniformBuffer(perspective, rotation, zoom);
 	}
-//	uboVS.projection = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.1f, 256.0f);
-//	glm::mat4 viewMatrix = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, zoom));
-//
-//	uboVS.model = viewMatrix * glm::translate(glm::mat4(), cameraPos);
-//	uboVS.model = glm::rotate(uboVS.model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-//	uboVS.model = glm::rotate(uboVS.model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-//	uboVS.model = glm::rotate(uboVS.model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-//
-//	memcpy(uniformBuffers.scene.mapped, &uboVS, sizeof(uboVS));
 }
 
 void VulkanExample::draw()
@@ -502,6 +502,7 @@ void VulkanExample::prepare()
 	preparePipelines();
 	setupDescriptorPool();
 	setupDescriptorSet();
+	updateUniformBuffers();
 	buildCommandBuffers();
 	prepared = true;
 }
@@ -510,7 +511,13 @@ void VulkanExample::render()
 {
 	if (!prepared)
 		return;
+	vkDeviceWaitIdle(device);
 	draw();
+	vkDeviceWaitIdle(device);
+	if (!paused)
+	{
+		updateUniformBuffers();
+	}
 }
 
 void VulkanExample::viewChanged()
