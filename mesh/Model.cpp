@@ -11,11 +11,11 @@ Model::~Model()
 	destroy(*vulkanDevice);
 }
 
-void Model::updateUniformBuffer(glm::mat4 perspective, glm::vec3 rotation, float zoom)
+void Model::updateUniformBuffer(glm::mat4 perspective, glm::vec3 rotation, float zoom, glm::vec2 translate)
 {
 	uboVS.projection = perspective;
 
-	glm::mat4 viewMatrix = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, zoom));
+	glm::mat4 viewMatrix = glm::translate(glm::mat4(), glm::vec3(translate, zoom));
 
 	uboVS.model = viewMatrix * glm::translate(glm::mat4(), { 0.1f, 1.1f, 0.0f });
 	uboVS.model = glm::rotate(uboVS.model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -46,7 +46,18 @@ void Model::setupDescriptorSet(VkDescriptorPool pool, VkDescriptorSetLayout desc
 			&descriptorSetLayout,
 			1);
 
-	VK_CHECK_RESULT(vkAllocateDescriptorSets(vulkanDevice->logicalDevice, &allocInfo, &descriptorSet));
+//	if (vkAllocateDescriptorSets(vulkanDevice->logicalDevice, &allocInfo, &descriptorSet) != VK_SUCCESS)
+//	{
+//		throw std::runtime_error("failed to allocate descriptor set");
+//	}
+
+	VkResult res = vkAllocateDescriptorSets(vulkanDevice->logicalDevice, &allocInfo, &descriptorSet);
+		if (res != VK_SUCCESS)
+		{
+			std::cout << "Fatal : VkResult is \"" << vks::tools::errorString(res) << "\" in " << __FILE__ << " at line " << __LINE__ << std::endl;
+			assert(res == VK_SUCCESS);
+		}
+//	VK_CHECK_RESULT(vkAllocateDescriptorSets(vulkanDevice->logicalDevice, &allocInfo, &descriptorSet));
 
 	VkDescriptorImageInfo texDescriptor =
 		vks::initializers::descriptorImageInfo(

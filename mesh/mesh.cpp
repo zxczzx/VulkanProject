@@ -255,7 +255,7 @@ void VulkanExample::loadModel(std::string filename, Model& model)
 
 void VulkanExample::loadAssets()
 {
-	const int MODELS_COUNT = 1;
+	const int MODELS_COUNT = 2;
 	models.resize(MODELS_COUNT);
 
 	for (int i = 0; i < MODELS_COUNT; i++)
@@ -472,11 +472,15 @@ void VulkanExample::preparePipelines()
 
 void VulkanExample::updateUniformBuffers()
 {
-	for (auto model : models)
-	{
-		glm::mat4 perspective = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.1f, 256.0f);
-		model->updateUniformBuffer(perspective, rotation, zoom);
-	}
+//	glm::mat4 perspective = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.1f, 256.0f);
+//	for (auto model : models)
+//	{
+//		model->updateUniformBuffer(perspective, rotation, zoom, glm::vec2(0.0f, 0.0f));
+//	}
+	glm::mat4 perspective = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.1f, 256.0f);
+	models[0]->updateUniformBuffer(perspective, rotation, zoom, glm::vec2(0.0f, 0.0f));
+
+	models[1]->updateUniformBuffer(perspective, rotation, zoom, glm::vec2(0.0f, 2.0f));
 }
 
 void VulkanExample::draw()

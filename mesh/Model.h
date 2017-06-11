@@ -43,7 +43,7 @@ public:
 	Model(vks::VulkanDevice *vulkanDevice);
 	~Model();
 
-	void updateUniformBuffer(glm::mat4 perspective, glm::vec3 rotation, float zoom);
+	void updateUniformBuffer(glm::mat4 perspective, glm::vec3 rotation, float zoom, glm::vec2 translate);
 
 	// Prepare and initialize uniform buffer containing shader uniforms
 	void prepareUniformBuffers();
