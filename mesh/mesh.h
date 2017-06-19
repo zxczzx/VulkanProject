@@ -37,6 +37,9 @@
 
 class VulkanExample : public VulkanExampleBase
 {
+private:
+	const int MODELS_COUNT = 3;
+
 public:
 	bool wireframe = false;
 

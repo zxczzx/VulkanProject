@@ -255,7 +255,6 @@ void VulkanExample::loadModel(std::string filename, Model& model)
 
 void VulkanExample::loadAssets()
 {
-	const int MODELS_COUNT = 2;
 	models.resize(MODELS_COUNT);
 
 	for (int i = 0; i < MODELS_COUNT; i++)
@@ -335,15 +334,15 @@ void VulkanExample::setupDescriptorPool()
 	// Example uses one ubo and one combined image sampler
 	std::vector<VkDescriptorPoolSize> poolSizes =
 	{
-		vks::initializers::descriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1),
-		vks::initializers::descriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1),
+		vks::initializers::descriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, MODELS_COUNT),
+		vks::initializers::descriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MODELS_COUNT),
 	};
 
 	VkDescriptorPoolCreateInfo descriptorPoolInfo =
 		vks::initializers::descriptorPoolCreateInfo(
 			static_cast<uint32_t>(poolSizes.size()),
 			poolSizes.data(),
-			1);
+			MODELS_COUNT);
 
 	VK_CHECK_RESULT(vkCreateDescriptorPool(device, &descriptorPoolInfo, nullptr, &descriptorPool));
 }
@@ -472,15 +471,12 @@ void VulkanExample::preparePipelines()
 
 void VulkanExample::updateUniformBuffers()
 {
-//	glm::mat4 perspective = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.1f, 256.0f);
-//	for (auto model : models)
-//	{
-//		model->updateUniformBuffer(perspective, rotation, zoom, glm::vec2(0.0f, 0.0f));
-//	}
 	glm::mat4 perspective = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.1f, 256.0f);
-	models[0]->updateUniformBuffer(perspective, rotation, zoom, glm::vec2(0.0f, 0.0f));
 
-	models[1]->updateUniformBuffer(perspective, rotation, zoom, glm::vec2(0.0f, 2.0f));
+	for (int i = 0; i < models.size(); i++)
+	{
+		models[i]->updateUniformBuffer(perspective, rotation, zoom, glm::vec2(0.0f + i, 0.0f + i));
+	}
 }
 
 void VulkanExample::draw()

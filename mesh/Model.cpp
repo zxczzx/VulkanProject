@@ -52,11 +52,11 @@ void Model::setupDescriptorSet(VkDescriptorPool pool, VkDescriptorSetLayout desc
 //	}
 
 	VkResult res = vkAllocateDescriptorSets(vulkanDevice->logicalDevice, &allocInfo, &descriptorSet);
-		if (res != VK_SUCCESS)
-		{
-			std::cout << "Fatal : VkResult is \"" << vks::tools::errorString(res) << "\" in " << __FILE__ << " at line " << __LINE__ << std::endl;
-			assert(res == VK_SUCCESS);
-		}
+	if (res != VK_SUCCESS)
+	{
+		std::cout << "Fatal : VkResult is \"" << vks::tools::errorString(res) << "\" in " << __FILE__ << " at line " << __LINE__ << std::endl;
+		assert(res == VK_SUCCESS);
+	}
 //	VK_CHECK_RESULT(vkAllocateDescriptorSets(vulkanDevice->logicalDevice, &allocInfo, &descriptorSet));
 
 	VkDescriptorImageInfo texDescriptor =
