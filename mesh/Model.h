@@ -6,6 +6,10 @@
 // This is for demonstration and learning purposes, the other examples use a model loader class for easy access
 class Model
 {
+private:
+	bool isStatic = false;
+	std::string id;
+
 public:
 	struct
 	{
@@ -52,6 +56,11 @@ public:
 
 	// Destroys all Vulkan resources created for this model
 	void destroy(VkDevice device);
+
+	void loadModel(std::string filename, VkQueue queue, VkDevice device);
+
+	std::string getId();
+	void setId(std::string id);
 };
 
 

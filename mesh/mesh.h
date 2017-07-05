@@ -21,7 +21,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <assimp/Importer.hpp> 
-#include <assimp/scene.h>     
+#include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <assimp/cimport.h>
 
@@ -38,7 +38,7 @@
 class VulkanExample : public VulkanExampleBase
 {
 private:
-	const int MODELS_COUNT = 3;
+	const int MODELS_COUNT = 2;
 
 public:
 	bool wireframe = false;
@@ -66,9 +66,6 @@ public:
 	void reBuildCommandBuffers();
 
 	void buildCommandBuffers();
-
-	// Load a model from file using the ASSIMP model loader and generate all resources required to render the model
-	void loadModel(std::string filename, Model& model);
 
 	void loadAssets();
 
